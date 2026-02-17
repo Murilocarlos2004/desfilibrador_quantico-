@@ -1,0 +1,151 @@
+import json
+import os
+
+DATA_FILE = "Fichas.json"
+
+default_data = {
+    "observador": {
+        "title": "Ficha 001 — Observador",
+        "status": "Instável",
+        "funcao": "Monitorar padrões emergentes",
+        "notas": "Responde a estímulos internos."
+    },
+    "nucleo": {
+        "title": "Ficha 002 — Núcleo",
+        "status": "Ativo",
+        "funcao": "Sustentar coerência do sistema",
+        "notas": "Alta densidade informacional."
+    },
+    "anomalia": {
+        "title": "Ficha 003 — Anomalia",
+        "status": "Não catalogado",
+        "funcao": "Desconhecida",
+        "notas": "Evitar observação prolongada."
+    }
+}
+
+def clear():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def pause():
+    input("Pressione Enter para continuar...")
+
+def load_data():
+    if not os.path.exists(DATA_FILE):
+        return default_data
+    with open(DATA_FILE, "r") as f:
+        return json.load(f)
+
+def save_data(data):
+    with open(DATA_FILE, "w") as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+
+def header():
+    print("=" * 40)
+    print("DESFLIBIRADOR QUÂNTICO")
+    print("Sistema interno Experimental")
+    print("=" * 40 )
+
+def save_data(data):
+        with open(DATA_FILE, "w") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+
+def header():
+    print("═" * 40)
+    print(" DESFIBRILADOR QUÂNTICO ")
+    print(" Sistema Interno Experimental")
+    print("═" * 40)
+
+def list_fichas(data):
+    print("\nFichas disponíveis:\n")
+    for i, key in enumerate(data.keys(), start=1):
+        print(f"{i}. {key}")
+    print("\n0. Voltar")
+
+def show_ficha(key, ficha):
+    clear()
+    header()
+    print(f"\n{ficha['titulo']}\n")
+    print(f"Status : {ficha['status']}")
+    print(f"Função : {ficha['funcao']}")
+    print(f"Notas  : {ficha['notas']}\n")
+    print("1. Editar ficha")
+    print("0. Voltar")
+
+def edit_ficha(ficha):
+    clear()
+    header()
+    print("\n-- MODO EDIÇÃO --\n")
+
+    for campo in ["titulo", "status", "funcao", "notas"]:
+        atual = ficha[campo]
+        novo = input(f"{campo.capitalize()} [{atual}]: ").strip()
+        if novo:
+            ficha[campo] = novo
+
+def main():
+    data = load_data()
+
+    while True:
+        clear()
+        header()
+        print("\n1. Abrir ficha")
+        print("2. Criar nova ficha")
+        print("3. Salvar")
+        print("0. Sair")
+
+        escolha = input("\n> ").strip()
+
+        if escolha == "1":
+            while True:
+                clear()
+                header()
+                list_fichas(data)
+                sel = input("\nEscolha: ").strip()
+
+                if sel == "0":
+                    break
+
+                try:
+                    key = list(data.keys())[int(sel) - 1]
+                except:
+                    continue
+
+                while True:
+                    show_ficha(key, data[key])
+                    acao = input("\n> ").strip()
+
+                    if acao == "1":
+                        edit_ficha(data[key])
+                    else:
+                        break
+
+        elif escolha == "2":
+            clear()
+            header()
+            print("\nCriar nova ficha\n")
+            chave = input("ID interno (sem espaços): ").strip()
+
+            if chave in data or not chave:
+                continue
+
+            data[chave] = {
+                "titulo": input("Título: "),
+                "status": input("Status: "),
+                "funcao": input("Função: "),
+                "notas": input("Notas: ")
+            }
+
+        elif escolha == "3":
+            save_data(data)
+            print("\nDados salvos.")
+            pause()
+
+        elif escolha == "0":
+            save_data(data)
+            clear()
+            print("Sistema encerrado.")
+            break
+
+if __name__ == "__main__":
+    main()
